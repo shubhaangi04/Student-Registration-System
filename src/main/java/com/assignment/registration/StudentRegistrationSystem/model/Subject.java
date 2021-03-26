@@ -15,20 +15,18 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "Subject")
+@Table(name = "subject")
 public class Subject {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int subjectId;
+  private int id;
 
   private int studentId;
 
   @ManyToMany(
-      fetch = FetchType.LAZY,
-      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
       mappedBy = "subjectList")
-  private Set<Student> students = new HashSet<>();
+  private Set<Student> students ;//= new HashSet<>();
 
   public Subject() {}
 
@@ -38,7 +36,7 @@ public class Subject {
       String subjectDescription,
       String subjectStartTime,
       String subjectEndTime) {
-    this.subjectId = subjectId;
+    this.id = subjectId;
     this.subjectName = subjectName;
     this.subjectDescription = subjectDescription;
     this.subjectStartTime = subjectStartTime;
@@ -58,12 +56,12 @@ public class Subject {
   @NotBlank(message = "end time is mandatory")
   private String subjectEndTime;
 
-  public int getSubjectId() {
-    return subjectId;
+  public int getId() {
+    return id;
   }
 
-  public void setSubjectId(int subjectId) {
-    this.subjectId = subjectId;
+  public void setId(int subjectId) {
+    this.id = subjectId;
   }
 
   public String getSubjectName() {

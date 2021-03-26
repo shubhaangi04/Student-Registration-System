@@ -18,12 +18,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "Student")
+@Table(name = "student")
 public class Student {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private int id;
 
   @NotBlank(message = "name is mandatory")
   @Size(min = 2, message = "name should have atleast 2 characters")
@@ -32,14 +32,12 @@ public class Student {
   @Column(unique = true)
   private String studentEmail;
 
-  @ManyToMany(
-      fetch = FetchType.LAZY,
-      cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToMany
   @JoinTable(
       name = "student_subject",
-      joinColumns = {@JoinColumn(name = "id")},
-      inverseJoinColumns = @JoinColumn(name = "subjectId"))
-  Set<Subject> subjectList = new HashSet<>();
+      joinColumns = {@JoinColumn(name = "student_id")},
+      inverseJoinColumns = @JoinColumn(name = "subject_id"))
+  Set<Subject> subjectList;// = new HashSet<>();
 
   public Student() {}
 
@@ -50,11 +48,11 @@ public class Student {
     this.studentEmail = studentEmail;
   }
 
-  public Integer getStudentId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setStudentId(Integer studentId) {
+  public void setId(Integer studentId) {
     id = studentId;
   }
 
