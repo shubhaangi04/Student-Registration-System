@@ -1,13 +1,13 @@
 package com.assignment.registration.StudentRegistrationSystem.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.assignment.registration.StudentRegistrationSystem.exception.StudentSubjectIllegalStateException;
-import com.assignment.registration.StudentRegistrationSystem.model.Student;
 import com.assignment.registration.StudentRegistrationSystem.model.Subject;
 import com.assignment.registration.StudentRegistrationSystem.repository.SubjectRepository;
 
@@ -21,38 +21,54 @@ public class SubjectService {
     return "Saved";
   }
 
-  public void removeSubject(int studentId) {
+  public void removeSubjectForStudent(int studentId) {
     subjectRepository.deleteById(studentId);
   }
 
-  public HashSet<Subject> getAllSubjects(int studentId) {
+  public HashSet<Subject> getAllSubjectsForStudent(int studentId) {
     HashSet<Subject> subjects = new HashSet<Subject>();
     subjectRepository.findByStudentId(studentId).forEach(subjects::add);
     return subjects;
   }
 
+  public List<Subject> getAllSubjects() {
+    List<Subject> subjects = new ArrayList<Subject>();
+    subjectRepository.findAll().forEach(subjects::add);
+    return subjects;
+  }
+
+  public Subject getSubjectByStudent(int id) {
+    Optional<Subject> optionalSubject = subjectRepository.findById(id);
+    if (!optionalSubject.isPresent()) {}
+
+    return optionalSubject.get();
+  }
+
   public Subject getSubject(int id) {
     Optional<Subject> optionalSubject = subjectRepository.findById(id);
-    if (!optionalSubject.isPresent()) {
-      throw new StudentSubjectIllegalStateException(
-          "Failed to get subject because subject with " + id + " doesn't exist!");
-    }
-    Subject subject = optionalSubject.get();
-    return subject;
+    if (!optionalSubject.isPresent()) {}
+
+    return optionalSubject.get();
   }
 
   public void updateSubject(Subject newSubject) {
     subjectRepository.save(newSubject);
   }
 
-  public void registerStudentToSubject(int subjectId, Student student) {
-    Optional<Subject> optionalSubject = subjectRepository.findById(subjectId);
-    if (!optionalSubject.isPresent()) {
-      throw new StudentSubjectIllegalStateException(
-          "Failed to register Student because " + subjectId + " doesn't exist!");
+  public List<Subject> getAllSubject() {
+    List<Subject> subjects = new ArrayList<Subject>();
+    Iterable<Subject> itr = subjectRepository.findAll();
+    for (Subject subject : itr) {
+      subjects.add(subject);
     }
-    Subject subject = optionalSubject.get();
-    subject.setStudent(student);
-    subjectRepository.save(subject);
+    return subjects;
+  }
+
+  public Subject updateSubject(int id, Subject newSubject) {
+    return subjectRepository.save(newSubject);
+  }
+
+  public void removeSubject(int id) {
+    subjectRepository.deleteById(id);
   }
 }

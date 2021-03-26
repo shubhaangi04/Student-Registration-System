@@ -1,10 +1,13 @@
 package com.assignment.registration.StudentRegistrationSystem.controller;
 
-import java.util.HashSet;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,45 +16,38 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.assignment.registration.StudentRegistrationSystem.model.Student;
 import com.assignment.registration.StudentRegistrationSystem.model.Subject;
 import com.assignment.registration.StudentRegistrationSystem.service.SubjectService;
 
 @RestController
 public class SubjectController {
 
-  @Autowired private SubjectService subjectService;
+	@Autowired private SubjectService subjectService;
+	
+	@GetMapping(value = "/subjects/{id}")
+	  public ResponseEntity<?> getSubject(@PathVariable int id) {
+		return new ResponseEntity<Subject>(subjectService.getSubject(id), new HttpHeaders(), HttpStatus.OK);
+	  }
 
-  @GetMapping(value = "/students/{id}/subjects/")
-  public Subject getSubject(@PathVariable int id) {
-    return subjectService.getSubject(id);
-  }
+	  @GetMapping("/subjects")
+	  public List<Subject> getSubjects() {
+	    return subjectService.getAllSubjects();
+	  }
 
-  @GetMapping("/students/{id}/subjects/{subjectId}")
-  public HashSet<Subject> getAllSubjects(@PathVariable int id) {
-    return subjectService.getAllSubjects(id);
-  }
+	  @PostMapping("/subjects")
+	  public ResponseEntity<?> createSubject(@Valid @RequestBody Subject subject) {
+		  subjectService.addSubject(subject);
+		  return new ResponseEntity<>("Subject successfully created", new HttpHeaders(), HttpStatus.OK);
+	  }
 
-  @PostMapping("/students/{id}/subjects/")
-  public void addSubject(@Valid @RequestBody Subject subject, @PathVariable int id) {
-    subject.setStudent(new Student(id, "", ""));
-    subjectService.addSubject(subject);
-  }
+	  @PutMapping(value = "/subjects/{id}")
+	  public Subject updateStudent(@PathVariable int id, @Valid @RequestBody Subject subject) {
+	    return subjectService.updateSubject(id, subject);
+	  }
 
-  @PutMapping(value = "/students/{id}/subjects/{subjectId}")
-  public void updateSubject(@Valid @RequestBody Subject subject, @PathVariable int id) {
-	  subject.setStudent(new Student(id, "", ""));
-	  subjectService.updateSubject(subject);
-  }
-
-  @DeleteMapping("/students/{id}/subjects/{subjectId}")
-  public void deleteSubject(@PathVariable int id) {
-    subjectService.removeSubject(id);
-  }
-  
-  @PutMapping("/registerStudentToSubject/{subjectId}")
-	public String enrollStudentsToSubject(@PathVariable int subjectId, @RequestBody Student students) {
-		subjectService.registerStudentToSubject(subjectId, students);
-		return "Students has been successfully Enrolled to Course :: " + subjectId;
-	}
-}
+	  @DeleteMapping("/subjects/{id}")
+	  public ResponseEntity<?> deleteSubject(@PathVariable int id) {
+	    subjectService.removeSubject(id);
+	    return new ResponseEntity<>("Subject successfully deleted", new HttpHeaders(), HttpStatus.OK);
+	  }
+ }

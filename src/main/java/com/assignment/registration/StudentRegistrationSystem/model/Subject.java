@@ -1,12 +1,16 @@
 package com.assignment.registration.StudentRegistrationSystem.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
@@ -18,41 +22,40 @@ public class Subject {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int subjectId;
 
-  @ManyToOne
-  @JoinColumn(name = "student_id", nullable = false)
-  private Student student;
+  private int studentId;
+
+  @ManyToMany(
+      fetch = FetchType.LAZY,
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+      mappedBy = "subjectList")
+  private Set<Student> students = new HashSet<>();
 
   public Subject() {}
-  
+
   public Subject(
       int subjectId,
-      Student student,
       String subjectName,
       String subjectDescription,
       String subjectStartTime,
-      String subjectEndTime,
-      int studentId) {
-    super();
+      String subjectEndTime) {
     this.subjectId = subjectId;
-    this.student = student;
     this.subjectName = subjectName;
     this.subjectDescription = subjectDescription;
     this.subjectStartTime = subjectStartTime;
     this.subjectEndTime = subjectEndTime;
-    this.student = new Student(studentId, "", "");
   }
 
-  @NotBlank(message = "Name is mandatory")
+  @NotBlank(message = "name is mandatory")
   @Column(unique = true)
   private String subjectName;
 
-  @NotBlank(message = "Description is mandatory")
+  @NotBlank(message = "description is mandatory")
   private String subjectDescription;
 
-  @NotBlank(message = "Start time is mandatory")
+  @NotBlank(message = "start time is mandatory")
   private String subjectStartTime;
 
-  @NotBlank(message = "End time is mandatory")
+  @NotBlank(message = "end time is mandatory")
   private String subjectEndTime;
 
   public int getSubjectId() {
@@ -95,11 +98,19 @@ public class Subject {
     this.subjectEndTime = subjectEndTime;
   }
 
-  public Student getStudent() {
-    return student;
+  public Set<Student> getStudent() {
+    return students;
   }
 
-  public void setStudent(Student student) {
-    this.student = student;
+  public void setStudent(Set<Student> student) {
+    this.students = student;
+  }
+
+  public int getStudentId() {
+    return studentId;
+  }
+
+  public void setStudentId(int studentId) {
+    this.studentId = studentId;
   }
 }
